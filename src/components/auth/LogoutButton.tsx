@@ -36,8 +36,7 @@ export default function LogoutButton({
 
   const styles = {
     sidebar:
-      "flex items-center gap-2 text-[10px] font-semibold text-[#80969a] transition hover:text-white disabled:cursor-not-allowed disabled:opacity-50",
-
+      "flex items-center gap-2 text-[10px] font-semibold text-white/50 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-50",
     header:
       "flex items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold text-muted transition hover:bg-sand/50 hover:text-ink disabled:cursor-not-allowed disabled:opacity-50",
   };
