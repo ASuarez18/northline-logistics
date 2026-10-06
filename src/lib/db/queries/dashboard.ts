@@ -25,7 +25,7 @@ export function findClockedInShifts() {
   });
 }
 
-export async function findCurrentWeekTotals(weekStart: Date, weekEnd: Date) {
+export async function findWeekTotals(weekStart: Date, weekEnd: Date) {
   const rows = await prisma.$queryRaw<WeekTotal[]>(Prisma.sql`
     SELECT
       u.id,

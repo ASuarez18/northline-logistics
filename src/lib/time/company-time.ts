@@ -19,6 +19,10 @@ export function formatDuration(totalSeconds: number) {
   return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
 }
 
+export function formatWeekParam(weekStart: Date) {
+  return formatInTimeZone(weekStart, COMPANY_TIME_ZONE, "yyyy-MM-dd");
+}
+
 export function currentCompanyWeek(now = new Date()) {
   const zonedNow = toZonedTime(now, COMPANY_TIME_ZONE);
   const weekStart = startOfWeek(zonedNow, { weekStartsOn: 1 });
@@ -28,4 +32,20 @@ export function currentCompanyWeek(now = new Date()) {
     start: fromZonedTime(weekStart, COMPANY_TIME_ZONE),
     end: fromZonedTime(weekEnd, COMPANY_TIME_ZONE),
   };
+}
+
+export function companyWeekFromParam(value: string | undefined, now = new Date()) {
+  const current = currentCompanyWeek(now);
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return current;
+  }
+
+  const selected = currentCompanyWeek(
+    fromZonedTime(`${value} 00:00:00`, COMPANY_TIME_ZONE),
+  );
+  if (Number.isNaN(selected.start.getTime()) || selected.start > current.start) {
+    return current;
+  }
+
+  return selected;
 }
