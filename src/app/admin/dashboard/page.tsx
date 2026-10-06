@@ -6,6 +6,7 @@ import {
   companyWeekFromParam,
   currentCompanyWeek,
   formatCompanyDate,
+  formatCompanyDateTimeLocal,
   formatCompanyTime,
   formatDuration,
   formatWeekParam,
@@ -30,6 +31,7 @@ export default async function AdminDashboardPage({
     id: shift.id,
     name: `${shift.user.firstName} ${shift.user.lastName}`,
     clockedInAt: formatCompanyTime(shift.clockIn),
+    clockInLocal: formatCompanyDateTimeLocal(shift.clockIn),
   }));
   const weekRows = totals.map((total) => ({
     id: total.id,

@@ -19,6 +19,19 @@ export function formatDuration(totalSeconds: number) {
   return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
 }
 
+export function formatCompanyDateTimeLocal(date: Date) {
+  return formatInTimeZone(date, COMPANY_TIME_ZONE, "yyyy-MM-dd'T'HH:mm");
+}
+
+export function parseCompanyDateTime(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) {
+    return null;
+  }
+
+  const parsed = fromZonedTime(value.replace("T", " "), COMPANY_TIME_ZONE);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 export function formatWeekParam(weekStart: Date) {
   return formatInTimeZone(weekStart, COMPANY_TIME_ZONE, "yyyy-MM-dd");
 }

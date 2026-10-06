@@ -1,8 +1,12 @@
+import { ClockOutDialog } from "@/components/admin/ClockOutDialog";
+
 type ShiftRow = {
   id: string;
   clockIn: string;
   clockOut: string;
   duration: string;
+  openShift: { clockInLocal: string } | null;
+  employeeName: string;
 };
 
 export function EmployeeShifts({
@@ -20,12 +24,15 @@ export function EmployeeShifts({
             <th className="px-4 py-3 font-medium">Clock in</th>
             <th className="px-4 py-3 font-medium">Clock out</th>
             <th className="px-4 py-3 font-medium">Duration</th>
+            <th className="px-4 py-3 font-medium">
+              <span className="sr-only">Clock out</span>
+            </th>
           </tr>
         </thead>
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td className="px-4 py-6 text-zinc-500" colSpan={3}>
+              <td className="px-4 py-6 text-zinc-500" colSpan={4}>
                 No shifts this week.
               </td>
             </tr>
@@ -38,6 +45,15 @@ export function EmployeeShifts({
                 <td className="px-4 py-3">{row.clockIn}</td>
                 <td className="px-4 py-3">{row.clockOut}</td>
                 <td className="px-4 py-3">{row.duration}</td>
+                <td className="px-4 py-3 text-right">
+                  {row.openShift ? (
+                    <ClockOutDialog
+                      shiftId={row.id}
+                      employeeName={row.employeeName}
+                      clockInLocal={row.openShift.clockInLocal}
+                    />
+                  ) : null}
+                </td>
               </tr>
             ))
           )}
@@ -46,6 +62,7 @@ export function EmployeeShifts({
               Total
             </td>
             <td className="px-4 py-3 font-medium">{total}</td>
+            <td />
           </tr>
         </tbody>
       </table>

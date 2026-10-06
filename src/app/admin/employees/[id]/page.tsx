@@ -9,6 +9,7 @@ import {
   companyWeekFromParam,
   currentCompanyWeek,
   formatCompanyDate,
+  formatCompanyDateTimeLocal,
   formatCompanyTime,
   formatDuration,
   formatWeekParam,
@@ -87,6 +88,7 @@ export default async function EmployeeDetailPage({
           total={formatDuration(totalSeconds)}
           rows={shifts.map((shift) => ({
             id: shift.id,
+            employeeName: `${employee.firstName} ${employee.lastName}`,
             clockIn: `${formatCompanyDate(shift.clockIn)}, ${formatCompanyTime(shift.clockIn)}`,
             clockOut: shift.clockOut
               ? `${formatCompanyDate(shift.clockOut)}, ${formatCompanyTime(shift.clockOut)}`
@@ -95,6 +97,9 @@ export default async function EmployeeDetailPage({
               shift.durationSeconds === null
                 ? "—"
                 : formatDuration(shift.durationSeconds),
+            openShift: shift.clockOut
+              ? null
+              : { clockInLocal: formatCompanyDateTimeLocal(shift.clockIn) },
           }))}
         />
       </div>
