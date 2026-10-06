@@ -69,3 +69,40 @@ export async function findEmployeeWeekTotal(
 
   return Number(rows[0]?.totalSeconds ?? 0);
 }
+
+export function findEmployeeShiftAudits(
+  employeeId: string,
+  weekStart: Date,
+  weekEnd: Date,
+) {
+  return prisma.shiftAudit.findMany({
+    where: {
+      shift: {
+        userId: employeeId,
+        clockIn: {
+          gte: weekStart,
+          lt: weekEnd,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      shiftId: true,
+      previousClockIn: true,
+      previousClockOut: true,
+      newClockIn: true,
+      newClockOut: true,
+      reason: true,
+      createdAt: true,
+      changedBy: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
