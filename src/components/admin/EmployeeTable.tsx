@@ -1,3 +1,4 @@
+import { DeactivateDialog } from "@/components/admin/DeactivateDialog";
 import Link from "next/link";
 
 type EmployeeRow = {
@@ -17,7 +18,7 @@ export function EmployeeTable({ rows }: { rows: EmployeeRow[] }) {
             <th className="px-4 py-3 font-medium">This week</th>
             <th className="px-4 py-3 font-medium">Status</th>
             <th className="px-4 py-3 font-medium">
-              <span className="sr-only">View</span>
+              <span className="sr-only">Actions</span>
             </th>
           </tr>
         </thead>
@@ -40,12 +41,19 @@ export function EmployeeTable({ rows }: { rows: EmployeeRow[] }) {
                   {row.isActive ? "Active" : "Inactive"}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Link
-                    href={`/admin/employees/${row.id}`}
-                    className="underline"
-                  >
-                    View
-                  </Link>
+                  <span className="inline-flex gap-4">
+                    <DeactivateDialog
+                      id={row.id}
+                      name={row.name}
+                      isActive={row.isActive}
+                    />
+                    <Link
+                      href={`/admin/employees/${row.id}`}
+                      className="underline"
+                    >
+                      View
+                    </Link>
+                  </span>
                 </td>
               </tr>
             ))

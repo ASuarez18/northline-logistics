@@ -42,3 +42,23 @@ export async function createEmployee(formData: FormData) {
   revalidatePath("/admin/employees");
   return {};
 }
+
+export async function setEmployeeActive(employeeId: string, isActive: boolean) {
+  const employee = await prisma.user.findUnique({
+    where: { id: employeeId },
+    select: { role: true },
+  });
+
+  if (!employee || employee.role !== "EMPLOYEE") {
+    return { error: "Employee not found." };
+  }
+
+  await prisma.user.update({
+    where: { id: employeeId },
+    data: { isActive },
+  });
+
+  revalidatePath("/admin/employees");
+  revalidatePath(`/admin/employees/${employeeId}`);
+  return {};
+}
