@@ -5,6 +5,7 @@ export type WeekTotal = {
   id: string;
   firstName: string;
   lastName: string;
+  isActive: boolean;
   totalSeconds: number;
 };
 
@@ -31,6 +32,7 @@ export async function findWeekTotals(weekStart: Date, weekEnd: Date) {
       u.id,
       u."firstName",
       u."lastName",
+      u."isActive",
       COALESCE(
         EXTRACT(EPOCH FROM SUM(s."clockOut" - s."clockIn")),
         0
@@ -42,7 +44,7 @@ export async function findWeekTotals(weekStart: Date, weekEnd: Date) {
       AND s."clockIn" >= ${weekStart}
       AND s."clockIn" < ${weekEnd}
     WHERE u.role = 'EMPLOYEE'::"Role"
-    GROUP BY u.id, u."firstName", u."lastName"
+    GROUP BY u.id, u."firstName", u."lastName", u."isActive"
     ORDER BY u."lastName" ASC, u."firstName" ASC
   `);
 
