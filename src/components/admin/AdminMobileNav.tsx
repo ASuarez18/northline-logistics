@@ -8,7 +8,6 @@ import {
 } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
 
 import AdminNavigation from "@/components/admin/AdminNavigation";
 import LogoutButton from "@/components/auth/LogoutButton";
@@ -22,7 +21,6 @@ type AdminMobileNavProps = {
 };
 
 export default function AdminMobileNav({ user }: AdminMobileNavProps) {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -33,9 +31,6 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
     setIsOpen(false);
   }
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -177,7 +172,7 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
                 Workspace
               </p>
 
-              <AdminNavigation />
+              <AdminNavigation onNavigate={closeDrawer} />
             </div>
 
             <div className="mt-auto border-t border-ink-3 px-1.75 pt-4.25">

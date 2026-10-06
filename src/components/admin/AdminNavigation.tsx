@@ -4,6 +4,10 @@ import Link from "next/link";
 import { LayoutDashboard, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+type AdminNavigationProps = {
+  onNavigate?: () => void;
+};
+
 const navigation = [
   {
     href: "/admin/dashboard",
@@ -17,7 +21,7 @@ const navigation = [
   },
 ];
 
-export default function AdminNavigation() {
+export default function AdminNavigation({ onNavigate }: AdminNavigationProps) {
   const pathname = usePathname();
 
   return (
@@ -32,6 +36,7 @@ export default function AdminNavigation() {
           <Link
             key={href}
             href={href}
+            onClick={onNavigate}
             aria-current={isActive ? "page" : undefined}
             className={
               isActive

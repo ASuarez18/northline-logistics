@@ -16,6 +16,8 @@ import {
   formatWeekParam,
 } from "@/lib/time/company-time";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage({
@@ -51,17 +53,13 @@ export default async function AdminDashboardPage({
     new Date(week.end.getTime() - 1),
   )}`;
 
-  const isCurrentWeek =
-    week.start.getTime() === currentWeek.start.getTime();
+  const isCurrentWeek = week.start.getTime() === currentWeek.start.getTime();
 
-  const previousWeek = currentCompanyWeek(
-    new Date(week.start.getTime() - 1),
-  );
+  const previousWeek = currentCompanyWeek(new Date(week.start.getTime() - 1));
 
   const nextWeek = currentCompanyWeek(week.end);
 
-  const previousHref =
-    `/admin/dashboard?week=${formatWeekParam(previousWeek.start)}`;
+  const previousHref = `/admin/dashboard?week=${formatWeekParam(previousWeek.start)}`;
 
   const nextHref =
     nextWeek.start.getTime() === currentWeek.start.getTime()
@@ -70,12 +68,12 @@ export default async function AdminDashboardPage({
 
   return (
     <>
-      <header className="mb-7">
+      <header className="mb-6 sm:mb-7">
         <p className="text-xs font-bold uppercase tracking-[1.7px] text-orange-dark">
           Administration
         </p>
 
-        <h1 className="mt-2 font-heading text-[31px] font-bold tracking-[-1.1px] text-ink">
+        <h1 className="mt-2 font-heading text-3xl font-bold tracking-tight text-ink sm:text-[31px]">
           Dashboard
         </h1>
 
@@ -84,8 +82,8 @@ export default async function AdminDashboardPage({
         </p>
       </header>
 
-      <div className="flex flex-col gap-8">
-        <section className="rounded-[10px] border border-border bg-surface p-6">
+      <div className="flex flex-col gap-6 sm:gap-8">
+        <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
           <div className="mb-4">
             <h2 className="font-heading text-lg font-bold text-ink">
               Clocked in now
@@ -99,8 +97,8 @@ export default async function AdminDashboardPage({
           <ClockedInTable rows={clockedInRows} />
         </section>
 
-        <section className="rounded-[10px] border border-border bg-surface p-6">
-          <div className="mb-4 flex items-end justify-between gap-4">
+        <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="font-heading text-lg font-bold text-ink">
                 {isCurrentWeek ? "This week" : "Past week"}
@@ -109,22 +107,30 @@ export default async function AdminDashboardPage({
               <p className="mt-1 text-sm text-muted">{weekLabel}</p>
             </div>
 
-            <div className="flex gap-4 text-sm">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
               <Link
                 href={previousHref}
-                className="font-medium text-orange-dark hover:underline"
+                className="inline-flex min-h-9 items-center gap-1 font-medium text-orange-dark transition hover:text-orange hover:underline"
               >
+                <ChevronLeft size={15} strokeWidth={2} aria-hidden="true" />
                 Previous week
               </Link>
 
               {isCurrentWeek ? (
-                <span className="text-muted">Next week</span>
+                <span
+                  className="inline-flex min-h-9 items-center gap-1 text-muted"
+                  aria-disabled="true"
+                >
+                  Next week
+                  <ChevronRight size={15} strokeWidth={2} aria-hidden="true" />
+                </span>
               ) : (
                 <Link
                   href={nextHref}
-                  className="font-medium text-orange-dark hover:underline"
+                  className="inline-flex min-h-9 items-center gap-1 font-medium text-orange-dark transition hover:text-orange hover:underline"
                 >
                   Next week
+                  <ChevronRight size={15} strokeWidth={2} aria-hidden="true" />
                 </Link>
               )}
             </div>
