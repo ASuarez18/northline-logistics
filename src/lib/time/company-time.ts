@@ -3,6 +3,9 @@ import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
 
 export const COMPANY_TIME_ZONE = "America/Vancouver";
 
+export const BUSINESS_START_HOUR = 8;
+export const BUSINESS_END_HOUR = 17;
+
 export function formatCompanyTime(date: Date) {
   return formatInTimeZone(date, COMPANY_TIME_ZONE, "h:mm a");
 }
@@ -47,7 +50,10 @@ export function currentCompanyWeek(now = new Date()) {
   };
 }
 
-export function companyWeekFromParam(value: string | undefined, now = new Date()) {
+export function companyWeekFromParam(
+  value: string | undefined,
+  now = new Date(),
+) {
   const current = currentCompanyWeek(now);
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return current;
@@ -56,9 +62,45 @@ export function companyWeekFromParam(value: string | undefined, now = new Date()
   const selected = currentCompanyWeek(
     fromZonedTime(`${value} 00:00:00`, COMPANY_TIME_ZONE),
   );
-  if (Number.isNaN(selected.start.getTime()) || selected.start > current.start) {
+  if (
+    Number.isNaN(selected.start.getTime()) ||
+    selected.start > current.start
+  ) {
     return current;
   }
 
   return selected;
+}
+
+export function companyBusinessDayBoundaries(date: Date) {
+  const companyDate = formatInTimeZone(date, COMPANY_TIME_ZONE, "yyyy-MM-dd");
+
+  const startHour = BUSINESS_START_HOUR.toString().padStart(2, "0");
+  const endHour = BUSINESS_END_HOUR.toString().padStart(2, "0");
+
+  return {
+    start: fromZonedTime(
+      `${companyDate} ${startHour}:00:00`,
+      COMPANY_TIME_ZONE,
+    ),
+    end: fromZonedTime(`${companyDate} ${endHour}:00:00`, COMPANY_TIME_ZONE),
+  };
+}
+
+export function isWithinCompanyBusinessHours(date: Date) {
+  const { start, end } = companyBusinessDayBoundaries(date);
+
+  return date >= start && date <= end;
+}
+
+export function canEmployeeClockIn(date: Date) {
+  const { start, end } = companyBusinessDayBoundaries(date);
+
+  return date >= start && date < end;
+}
+
+export function canEmployeeClockOut(date: Date) {
+  const { start, end } = companyBusinessDayBoundaries(date);
+
+  return date >= start && date <= end;
 }
