@@ -43,7 +43,7 @@ export function DeactivateDialog({
       </button>
       <dialog
         ref={dialogRef}
-        className="w-full max-w-md rounded-lg border border-zinc-200 bg-white p-6 text-zinc-950 backdrop:bg-black/40 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
+        className="m-auto w-full max-w-md rounded-lg border border-zinc-200 bg-white p-6 text-zinc-950 backdrop:bg-black/40 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
       >
         <h2 className="text-lg font-semibold">
           {isActive ? "Deactivate employee" : "Activate employee"}
