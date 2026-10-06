@@ -72,3 +72,19 @@ export async function requireAdmin() {
 
   return user;
 }
+
+/**
+ * @function requireEmployee
+ * @description Ensures that the authenticated user has an employee role. If not, redirects to the admin dashboard
+ * @returns {Promise<User>} The authenticated employee user
+ * @throws {Redirect} Redirects to the admin dashboard if the user is not an employee
+ */
+export async function requireEmployee() {
+  const user = await requireUser();
+
+  if (user.role !== "EMPLOYEE") {
+    redirect("/admin/dashboard");
+  }
+
+  return user;
+}

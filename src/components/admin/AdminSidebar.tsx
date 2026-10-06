@@ -1,6 +1,16 @@
 import Link from "next/link";
 
-export default function AdminSidebar() {
+import LogoutButton from "@/components/auth/LogoutButton";
+
+type AdminSidebarProps = {
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+};
+
+export default function AdminSidebar({ user }: AdminSidebarProps) {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-63 flex-col bg-ink px-4.5 pb-4.5 pt-7 text-white">
       <div className="px-2.5 pb-9.5">
@@ -39,9 +49,15 @@ export default function AdminSidebar() {
       </div>
 
       <div className="mt-auto border-t border-[#274149] px-1.75 pt-4.25">
-        <p className="text-xs font-semibold">Administrator</p>
+        <p className="text-xs font-semibold">
+          {user.firstName} {user.lastName}
+        </p>
 
-        <p className="mt-1 text-[10px] text-[#80969a]">ABC Holding</p>
+        <p className="mt-1 truncate text-[10px] text-[#80969a]">{user.email}</p>
+      </div>
+
+      <div className="mt-3">
+        <LogoutButton />
       </div>
     </aside>
   );
