@@ -2,11 +2,21 @@
 
 import { Prisma } from "@/lib/generated/prisma/client";
 import { hashPassword } from "@/lib/auth/password";
+import { requireActionAdmin } from "@/lib/auth/action-auth";
 import { prisma } from "@/lib/prisma";
-import { createEmployeeSchema } from "@/lib/validations/employee";
+import {
+  createEmployeeSchema,
+  setEmployeeActiveSchema,
+} from "@/lib/validations/employee";
 import { revalidatePath } from "next/cache";
 
 export async function createEmployee(formData: FormData) {
+  const auth = await requireActionAdmin();
+
+  if (auth.error) {
+    return { error: auth.error };
+  }
+
   const parsed = createEmployeeSchema.safeParse({
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
@@ -44,8 +54,25 @@ export async function createEmployee(formData: FormData) {
 }
 
 export async function setEmployeeActive(employeeId: string, isActive: boolean) {
+  const auth = await requireActionAdmin();
+
+  if (auth.error) {
+    return { error: auth.error };
+  }
+
+  const parsed = setEmployeeActiveSchema.safeParse({
+    employeeId,
+    isActive,
+  });
+
+  if (!parsed.success) {
+    return {
+      error: parsed.error.issues[0]?.message ?? "Check the request.",
+    };
+  }
+
   const employee = await prisma.user.findUnique({
-    where: { id: employeeId },
+    where: { id: parsed.data.employeeId },
     select: { role: true },
   });
 
@@ -54,11 +81,11 @@ export async function setEmployeeActive(employeeId: string, isActive: boolean) {
   }
 
   await prisma.user.update({
-    where: { id: employeeId },
-    data: { isActive },
+    where: { id: parsed.data.employeeId },
+    data: { isActive: parsed.data.isActive },
   });
 
   revalidatePath("/admin/employees");
-  revalidatePath(`/admin/employees/${employeeId}`);
+  revalidatePath(`/admin/employees/${parsed.data.employeeId}`);
   return {};
 }

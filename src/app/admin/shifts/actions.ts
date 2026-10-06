@@ -1,12 +1,22 @@
 "use server";
 
-import { findActingAdminId } from "@/lib/auth/acting-admin";
 import { prisma } from "@/lib/prisma";
 import { parseCompanyDateTime } from "@/lib/time/company-time";
+import { requireActionAdmin } from "@/lib/auth/action-auth";
 import { closeShiftSchema, correctShiftSchema } from "@/lib/validations/shift";
+
 import { revalidatePath } from "next/cache";
 
+
+
+
 export async function closeShift(formData: FormData) {
+  const auth = await requireActionAdmin();
+
+  if (auth.error) {
+    return { error: auth.error };
+  }
+
   const parsed = closeShiftSchema.safeParse({
     shiftId: formData.get("shiftId"),
     clockOut: formData.get("clockOut"),
@@ -20,13 +30,6 @@ export async function closeShift(formData: FormData) {
   const clockOut = parseCompanyDateTime(parsed.data.clockOut);
   if (!clockOut) {
     return { error: "Enter a valid clock-out time." };
-  }
-
-  const adminId = await findActingAdminId();
-  if (!adminId) {
-    return {
-      error: "An admin account is required to record who closed this shift.",
-    };
   }
 
   try {
@@ -50,7 +53,7 @@ export async function closeShift(formData: FormData) {
       await tx.shiftAudit.create({
         data: {
           shiftId: shift.id,
-          changedById: adminId,
+          changedById: auth.user.id,
           previousClockIn: shift.clockIn,
           previousClockOut: null,
           newClockIn: shift.clockIn,
@@ -79,6 +82,12 @@ export async function closeShift(formData: FormData) {
 }
 
 export async function correctShift(formData: FormData) {
+  const auth = await requireActionAdmin();
+
+  if (auth.error) {
+    return { error: auth.error };
+  }
+
   const parsed = correctShiftSchema.safeParse({
     shiftId: formData.get("shiftId"),
     clockIn: formData.get("clockIn"),
@@ -100,13 +109,6 @@ export async function correctShift(formData: FormData) {
   }
   if (clockOut <= clockIn) {
     return { error: "Clock out must be after clock in." };
-  }
-
-  const adminId = await findActingAdminId();
-  if (!adminId) {
-    return {
-      error: "An admin account is required to record who changed this shift.",
-    };
   }
 
   try {
@@ -135,7 +137,7 @@ export async function correctShift(formData: FormData) {
       await tx.shiftAudit.create({
         data: {
           shiftId: shift.id,
-          changedById: adminId,
+          changedById: auth.user.id,
           previousClockIn: shift.clockIn,
           previousClockOut: shift.clockOut,
           newClockIn: clockIn,
