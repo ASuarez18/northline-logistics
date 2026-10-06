@@ -1,3 +1,4 @@
+import { AddEmployeeModal } from "@/components/admin/AddEmployeeModal";
 import { EmployeeTable } from "@/components/admin/EmployeeTable";
 import { findWeekTotals } from "@/lib/db/queries/dashboard";
 import {
@@ -19,7 +20,10 @@ export default async function EmployeesPage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Employees</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold">Employees</h1>
+        <AddEmployeeModal />
+      </div>
       <EmployeeTable rows={rows} />
     </section>
   );
