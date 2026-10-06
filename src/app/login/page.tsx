@@ -1,14 +1,20 @@
-import LoginForm from "@/components/auth/LoginForm";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+import LoginForm from "@/components/auth/LoginForm";
+import { getCurrentUser } from "@/lib/auth/current-user";
+
+export default async function LoginPage() {
+  const user = await getCurrentUser();
+
+  if (user) {
+    redirect(user.role === "ADMIN" ? "/admin/dashboard" : "/employee");
+  }
   return (
     <main className="grid min-h-screen grid-cols-[minmax(370px,41%)_1fr] bg-white max-[820px]:grid-cols-1">
       {/* Brand panel */}
       <section className="relative flex flex-col overflow-hidden bg-ink px-14 py-10.5 text-white max-[820px]:hidden">
         <div className="relative z-10">
-          <p className="font-heading text-lg font-bold">
-            ABC Holding
-          </p>
+          <p className="font-heading text-lg font-bold">ABC Holding</p>
 
           <p className="mt-1 text-[9px] font-bold uppercase tracking-[2.6px] text-[#91a4a8]">
             Employee Portal
@@ -27,8 +33,8 @@ export default function LoginPage() {
           </h1>
 
           <p className="max-w-100 leading-[1.6] text-[#aebfc2]">
-            Access your employee portal to manage your workday and
-            stay connected with ABC Holding.
+            Access your employee portal to manage your workday and stay
+            connected with ABC Holding.
           </p>
         </div>
 
