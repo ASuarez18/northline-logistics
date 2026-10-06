@@ -7,9 +7,7 @@ type AdminLayoutProps = {
   children: ReactNode;
 };
 
-export default async function AdminLayout({
-  children,
-}: AdminLayoutProps) {
+export default async function AdminLayout({ children }: AdminLayoutProps) {
   const user = await requireAdmin();
   return (
     <div className="min-h-screen bg-[#f3f5f2]">
