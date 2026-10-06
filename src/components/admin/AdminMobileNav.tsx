@@ -31,7 +31,6 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
     setIsOpen(false);
   }
 
-
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -56,9 +55,7 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
     };
   }, [isOpen]);
 
-  function handleDrawerKeyDown(
-    event: ReactKeyboardEvent<HTMLElement>,
-  ) {
+  function handleDrawerKeyDown(event: ReactKeyboardEvent<HTMLElement>) {
     if (event.key !== "Tab") {
       return;
     }
@@ -123,74 +120,81 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
         </button>
       </header>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <button
-            type="button"
-            aria-label="Close navigation"
-            className="absolute inset-0 bg-ink/50"
-            onClick={closeDrawer}
-            tabIndex={-1}
-          />
+      <div
+        className={`fixed inset-0 z-50 lg:hidden ${
+          isOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+        aria-hidden={!isOpen}
+      >
+        <button
+          type="button"
+          aria-label="Close navigation"
+          className={`absolute inset-0 bg-ink/50 transition-opacity duration-200 motion-reduce:transition-none ${
+            isOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={closeDrawer}
+          tabIndex={-1}
+        />
 
-          <aside
-            ref={drawerRef}
-            id="admin-mobile-navigation"
-            aria-label="Admin navigation"
-            onKeyDown={handleDrawerKeyDown}
-            onTransitionEnd={handleTransitionEnd}
-            className="relative flex h-full w-[min(85vw,20rem)] flex-col bg-ink px-4.5 pb-4.5 pt-5 text-white shadow-xl"
-          >
-            <div className="flex items-start justify-between px-2.5 pb-8">
-              <div>
-                <Link
-                  href="/admin/dashboard"
-                  onClick={closeDrawer}
-                  className="font-heading text-lg font-bold"
-                >
-                  ABC Holding
-                </Link>
-
-                <p className="mt-1 text-[10px] uppercase tracking-[2px] text-white/50">
-                  Administration Portal
-                </p>
-              </div>
-
-              <button
-                ref={closeButtonRef}
-                type="button"
-                onClick={closeDrawer}
-                aria-label="Close navigation"
-                className="grid size-10 shrink-0 place-items-center rounded-md text-white/70 transition hover:bg-ink-2 hover:text-white"
-              >
-                <X size={20} strokeWidth={1.8} aria-hidden="true" />
-              </button>
-            </div>
-
+        <aside
+          ref={drawerRef}
+          id="admin-mobile-navigation"
+          aria-label="Admin navigation"
+          onKeyDown={handleDrawerKeyDown}
+          onTransitionEnd={handleTransitionEnd}
+          className={`relative flex h-full w-[min(85vw,20rem)] flex-col bg-ink px-4.5 pb-4.5 pt-5 text-white shadow-xl transition-transform duration-200 ease-out motion-reduce:transition-none ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="flex items-start justify-between px-2.5 pb-8">
             <div>
-              <p className="px-3 pb-2.5 text-[9px] font-bold uppercase tracking-[1.4px] text-white/45">
-                Workspace
-              </p>
+              <Link
+                href="/admin/dashboard"
+                onClick={closeDrawer}
+                className="font-heading text-lg font-bold"
+              >
+                ABC Holding
+              </Link>
 
-              <AdminNavigation onNavigate={closeDrawer} />
-            </div>
-
-            <div className="mt-auto border-t border-ink-3 px-1.75 pt-4.25">
-              <p className="text-xs font-semibold">
-                {user.firstName} {user.lastName}
-              </p>
-
-              <p className="mt-1 truncate text-[10px] text-white/50">
-                {user.email}
+              <p className="mt-1 text-[10px] uppercase tracking-[2px] text-white/50">
+                Administration Portal
               </p>
             </div>
 
-            <div className="mt-3">
-              <LogoutButton />
-            </div>
-          </aside>
-        </div>
-      )}
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={closeDrawer}
+              aria-label="Close navigation"
+              className="grid size-10 shrink-0 place-items-center rounded-md text-white/70 transition hover:bg-ink-2 hover:text-white"
+            >
+              <X size={20} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+          </div>
+
+          <div>
+            <p className="px-3 pb-2.5 text-[9px] font-bold uppercase tracking-[1.4px] text-white/45">
+              Workspace
+            </p>
+
+            <AdminNavigation onNavigate={closeDrawer} />
+          </div>
+
+          <div className="mt-auto border-t border-ink-3 px-1.75 pt-4.25">
+            <p className="text-xs font-semibold">
+              {user.firstName} {user.lastName}
+            </p>
+
+            <p className="mt-1 truncate text-[10px] text-white/50">
+              {user.email}
+            </p>
+          </div>
+
+          <div className="mt-3">
+            <LogoutButton />
+          </div>
+        </aside>
+      </div>
     </>
   );
 }
