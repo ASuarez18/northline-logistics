@@ -2,6 +2,7 @@
 
 import { createEmployee } from "@/app/admin/employees/actions";
 import { useRef, useState } from "react";
+import { Plus, UserPlus, X } from "lucide-react";
 
 export function AddEmployeeModal() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -34,71 +35,122 @@ export function AddEmployeeModal() {
       <button
         type="button"
         onClick={openDialog}
-        className="rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-950"
+        className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2"
       >
+        <Plus size={17} strokeWidth={2} aria-hidden="true" />
         Add employee
       </button>
+
       <dialog
         ref={dialogRef}
-        className="m-auto w-full max-w-md rounded-lg border border-zinc-200 bg-white p-6 text-zinc-950 backdrop:bg-black/40 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
+        className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-border bg-surface p-0 text-text shadow-xl backdrop:bg-ink/50"
       >
-        <form action={onSubmit} ref={formRef} className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">Add employee</h2>
-          <label className="flex flex-col gap-1 text-sm">
-            First name
-            <input
-              name="firstName"
-              required
-              className="rounded-md border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
-            Last name
-            <input
-              name="lastName"
-              required
-              className="rounded-md border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
-            Email
-            <input
-              name="email"
-              type="email"
-              required
-              className="rounded-md border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
-            Password
-            <input
-              name="password"
-              type="password"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className="rounded-md border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-          </label>
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-          <div className="flex justify-end gap-3">
+        <form action={onSubmit} ref={formRef}>
+          <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
+            <div className="flex gap-3 items-center">
+              <div className="grid size-14 shrink-0 place-items-center rounded-lg bg-orange-soft text-orange-dark">
+                <UserPlus size={32} strokeWidth={1.8} aria-hidden="true" />
+              </div>
+
+              <div>
+                <h2 className="font-heading text-lg font-bold text-ink">
+                  Add employee
+                </h2>
+
+                <p className="mt-1 text-sm text-muted">
+                  Create login access for a new employee.
+                </p>
+              </div>
+            </div>
+
             <button
               type="button"
               onClick={() => dialogRef.current?.close()}
-              className="rounded-md px-3 py-2 text-sm"
+              aria-label="Close dialog"
+              className="grid size-9 shrink-0 place-items-center rounded-md text-muted transition hover:bg-cream hover:text-ink"
+            >
+              <X size={18} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="grid gap-4 px-5 py-5 sm:px-6">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-1.5 text-sm font-medium text-text">
+                First name
+                <input
+                  name="firstName"
+                  required
+                  autoComplete="given-name"
+                  className="min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text outline-none transition placeholder:text-muted focus:border-orange focus:ring-2 focus:ring-orange-soft"
+                />
+              </label>
+
+              <label className="grid gap-1.5 text-sm font-medium text-text">
+                Last name
+                <input
+                  name="lastName"
+                  required
+                  autoComplete="family-name"
+                  className="min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text outline-none transition placeholder:text-muted focus:border-orange focus:ring-2 focus:ring-orange-soft"
+                />
+              </label>
+            </div>
+
+            <label className="grid gap-1.5 text-sm font-medium text-text">
+              Email
+              <input
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                className="min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text outline-none transition placeholder:text-muted focus:border-orange focus:ring-2 focus:ring-orange-soft"
+              />
+            </label>
+
+            <label className="grid gap-1.5 text-sm font-medium text-text">
+              Password
+              <input
+                name="password"
+                type="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text outline-none transition placeholder:text-muted focus:border-orange focus:ring-2 focus:ring-orange-soft"
+              />
+              <span className="text-xs font-normal text-muted">
+                Use at least 8 characters.
+              </span>
+            </label>
+
+            {error ? (
+              <div
+                role="alert"
+                className="rounded-md border border-danger/20 bg-danger-soft px-3 py-2.5 text-sm text-danger"
+              >
+                {error}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="flex flex-col-reverse gap-2 border-t border-border bg-cream/50 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+            <button
+              type="button"
+              onClick={() => dialogRef.current?.close()}
+              className="min-h-10 rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-text transition hover:bg-cream"
             >
               Cancel
             </button>
+
             <button
               type="submit"
               disabled={pending}
-              className="rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-950"
+              className="min-h-10 rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {pending ? "Saving..." : "Save"}
+              {pending ? "Saving..." : "Save employee"}
             </button>
           </div>
         </form>
       </dialog>
     </>
-  );
+);
 }
