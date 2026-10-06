@@ -61,41 +61,68 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="email">Email</label>
+  <form
+    onSubmit={handleSubmit}
+    className="grid gap-[18px]"
+  >
+    <label className="block">
+      <span className="mb-2 block text-[13px] font-semibold text-[#3d5055]">
+        Email address
+      </span>
 
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-        />
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autoComplete="email"
+        placeholder="you@abcholding.com"
+        required
+        className="min-h-[46px] w-full rounded-[7px] border border-[#cbd5d5] bg-white px-[13px] text-text outline-none transition placeholder:text-[#9ba8aa] focus:border-ink-3 focus:ring-3 focus:ring-ink-3/10"
+      />
+    </label>
+
+    <label className="block">
+      <span className="mb-2 block text-[13px] font-semibold text-[#3d5055]">
+        Password
+      </span>
+
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autoComplete="current-password"
+        placeholder="Enter your password"
+        required
+        className="min-h-[46px] w-full rounded-[7px] border border-[#cbd5d5] bg-white px-[13px] text-text outline-none transition placeholder:text-[#9ba8aa] focus:border-ink-3 focus:ring-3 focus:ring-ink-3/10"
+      />
+    </label>
+
+    <label className="flex cursor-pointer items-center gap-2 text-[13px] text-muted">
+      <input
+        name="rememberMe"
+        type="checkbox"
+        className="size-4 accent-orange"
+      />
+
+      Remember me
+    </label>
+
+    {error && (
+      <div
+        role="alert"
+        className="rounded-md bg-danger-soft px-[13px] py-[11px] text-[13px] text-danger"
+      >
+        {error}
       </div>
+    )}
 
-      <div>
-        <label htmlFor="password">Password</label>
-
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-        />
-      </div>
-
-      <label>
-        <input name="rememberMe" type="checkbox" />
-        Remember me
-      </label>
-
-      {error && <p role="alert">{error}</p>}
-
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Signing in..." : "Sign in"}
-      </button>
-    </form>
-  );
+    <button
+      type="submit"
+      disabled={isSubmitting}
+      className="mt-1 min-h-12 w-full rounded-[7px] bg-orange px-[17px] text-sm font-semibold text-white shadow-[0_3px_10px_rgba(237,106,50,.18)] transition hover:-translate-y-px hover:bg-orange-dark disabled:cursor-not-allowed disabled:bg-[#edf0ee] disabled:text-[#9caaaa] disabled:shadow-none disabled:hover:translate-y-0"
+    >
+      {isSubmitting ? "Signing in..." : "Sign in"}
+    </button>
+  </form>
+);
 }
