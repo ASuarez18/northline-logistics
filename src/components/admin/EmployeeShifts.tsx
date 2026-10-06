@@ -1,4 +1,5 @@
 import { ClockOutDialog } from "@/components/admin/ClockOutDialog";
+import { EditShiftDialog } from "@/components/admin/EditShiftDialog";
 
 type ShiftRow = {
   id: string;
@@ -6,6 +7,7 @@ type ShiftRow = {
   clockOut: string;
   duration: string;
   openShift: { clockInLocal: string } | null;
+  closedShift: { clockInLocal: string; clockOutLocal: string } | null;
   employeeName: string;
 };
 
@@ -25,7 +27,7 @@ export function EmployeeShifts({
             <th className="px-4 py-3 font-medium">Clock out</th>
             <th className="px-4 py-3 font-medium">Duration</th>
             <th className="px-4 py-3 font-medium">
-              <span className="sr-only">Clock out</span>
+              <span className="sr-only">Actions</span>
             </th>
           </tr>
         </thead>
@@ -51,6 +53,13 @@ export function EmployeeShifts({
                       shiftId={row.id}
                       employeeName={row.employeeName}
                       clockInLocal={row.openShift.clockInLocal}
+                    />
+                  ) : row.closedShift ? (
+                    <EditShiftDialog
+                      shiftId={row.id}
+                      employeeName={row.employeeName}
+                      clockInLocal={row.closedShift.clockInLocal}
+                      clockOutLocal={row.closedShift.clockOutLocal}
                     />
                   ) : null}
                 </td>

@@ -100,6 +100,12 @@ export default async function EmployeeDetailPage({
             openShift: shift.clockOut
               ? null
               : { clockInLocal: formatCompanyDateTimeLocal(shift.clockIn) },
+            closedShift: shift.clockOut
+              ? {
+                  clockInLocal: formatCompanyDateTimeLocal(shift.clockIn),
+                  clockOutLocal: formatCompanyDateTimeLocal(shift.clockOut),
+                }
+              : null,
           }))}
         />
       </div>

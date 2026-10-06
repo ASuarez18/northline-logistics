@@ -3,7 +3,7 @@
 import { findActingAdminId } from "@/lib/auth/acting-admin";
 import { prisma } from "@/lib/db/prisma";
 import { parseCompanyDateTime } from "@/lib/time/company-time";
-import { closeShiftSchema } from "@/lib/validations/shift";
+import { closeShiftSchema, correctShiftSchema } from "@/lib/validations/shift";
 import { revalidatePath } from "next/cache";
 
 export async function closeShift(formData: FormData) {
@@ -72,6 +72,94 @@ export async function closeShift(formData: FormData) {
 
     if (error instanceof Error && error.message === "ORDER") {
       return { error: "Clock out must be after clock in." };
+    }
+
+    throw error;
+  }
+}
+
+export async function correctShift(formData: FormData) {
+  const parsed = correctShiftSchema.safeParse({
+    shiftId: formData.get("shiftId"),
+    clockIn: formData.get("clockIn"),
+    clockOut: formData.get("clockOut"),
+    reason: formData.get("reason"),
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the form." };
+  }
+
+  const clockIn = parseCompanyDateTime(parsed.data.clockIn);
+  const clockOut = parseCompanyDateTime(parsed.data.clockOut);
+  if (!clockIn) {
+    return { error: "Enter a valid clock-in time." };
+  }
+  if (!clockOut) {
+    return { error: "Enter a valid clock-out time." };
+  }
+  if (clockOut <= clockIn) {
+    return { error: "Clock out must be after clock in." };
+  }
+
+  const adminId = await findActingAdminId();
+  if (!adminId) {
+    return {
+      error: "An admin account is required to record who changed this shift.",
+    };
+  }
+
+  try {
+    const employeeId = await prisma.$transaction(async (tx) => {
+      const shift = await tx.shift.findUnique({
+        where: { id: parsed.data.shiftId },
+      });
+
+      if (!shift) {
+        throw new Error("MISSING");
+      }
+      if (!shift.clockOut) {
+        throw new Error("OPEN");
+      }
+      if (
+        clockIn.getTime() === shift.clockIn.getTime() &&
+        clockOut.getTime() === shift.clockOut.getTime()
+      ) {
+        throw new Error("UNCHANGED");
+      }
+
+      await tx.shift.update({
+        where: { id: shift.id },
+        data: { clockIn, clockOut },
+      });
+      await tx.shiftAudit.create({
+        data: {
+          shiftId: shift.id,
+          changedById: adminId,
+          previousClockIn: shift.clockIn,
+          previousClockOut: shift.clockOut,
+          newClockIn: clockIn,
+          newClockOut: clockOut,
+          reason: parsed.data.reason,
+        },
+      });
+
+      return shift.userId;
+    });
+
+    revalidatePath("/admin/dashboard");
+    revalidatePath("/admin/employees");
+    revalidatePath(`/admin/employees/${employeeId}`);
+    return {};
+  } catch (error) {
+    if (error instanceof Error && error.message === "MISSING") {
+      return { error: "This shift no longer exists." };
+    }
+    if (error instanceof Error && error.message === "OPEN") {
+      return { error: "Close this shift before editing it." };
+    }
+    if (error instanceof Error && error.message === "UNCHANGED") {
+      return { error: "Change the clock-in or clock-out time." };
     }
 
     throw error;
