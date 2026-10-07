@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+import EmployeeDashboard from "@/components/employee/EmployeeDashboard";
+
+export const metadata: Metadata = {
+  title: "My workday | ABC Holding",
+  description: "Your employee time clock and weekly timesheet.",
+};
+
 export default function EmployeePage() {
-  return <h1>Employee Dashboard</h1>;
+  return <EmployeeDashboard />;
 }
