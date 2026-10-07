@@ -39,6 +39,52 @@ test("clock-in response enables clock-out without refreshing, then clock-out suc
   assert.equal(closed.canClockIn, true);
 });
 
+test("clock-in rejects a second clock-in while a shift is already open", async () => {
+  const db = fixture();
+  const start = new Date("2026-10-06T16:00:00Z");
+
+  await executeEmployeeOperation(
+    db,
+    "employee",
+    "clock-in",
+    null,
+    () => start,
+  );
+
+  await assert.rejects(
+    executeEmployeeOperation(
+      db,
+      "employee",
+      "clock-in",
+      null,
+      () => new Date(start.getTime() + 60_000),
+    ),
+    (error: unknown) =>
+      error instanceof EmployeeApiError &&
+      error.status === 409 &&
+      error.code === "ALREADY_CLOCKED_IN",
+  );
+});
+
+test("clock-out rejects when there is no open shift", async () => {
+  const db = fixture();
+  const now = new Date("2026-10-06T16:00:00Z");
+
+  await assert.rejects(
+    executeEmployeeOperation(
+      db,
+      "employee",
+      "clock-out",
+      null,
+      () => now,
+    ),
+    (error: unknown) =>
+      error instanceof EmployeeApiError &&
+      error.status === 409 &&
+      error.code === "NO_OPEN_SHIFT",
+  );
+});
+
 test("actual clock-out still rejects equal or earlier timestamps", async () => {
   const db = fixture();
   const start = new Date("2026-10-06T16:00:00Z");
