@@ -14,7 +14,7 @@ export default function EmployeeNavbar({ user }: EmployeeNavbarProps) {
       <div className="mx-auto flex min-h-16 max-w-296 items-center justify-between gap-3 px-4 sm:px-6">
         <div className="shrink-0">
           <p className="font-heading text-base font-bold text-ink">
-            ABC Holding
+            Northline
           </p>
 
           <p className="text-[9px] font-bold uppercase tracking-[1.8px] text-muted">

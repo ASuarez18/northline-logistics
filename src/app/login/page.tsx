@@ -14,7 +14,7 @@ export default async function LoginPage() {
       {/* Brand panel */}
       <section className="relative flex flex-col overflow-hidden bg-ink px-14 py-10.5 text-white max-[820px]:hidden">
         <div className="relative z-10">
-          <p className="font-heading text-lg font-bold">ABC Holding</p>
+          <p className="font-heading text-lg font-bold">Northline</p>
 
           <p className="mt-1 text-[9px] font-bold uppercase tracking-[2.6px] text-[#91a4a8]">
             Employee Portal
@@ -34,12 +34,12 @@ export default async function LoginPage() {
 
           <p className="max-w-100 leading-[1.6] text-[#aebfc2]">
             Access your employee portal to manage your workday and stay
-            connected with ABC Holding.
+            connected with Northline.
           </p>
         </div>
 
         <small className="relative z-10 text-[#758b8f]">
-          © 2026 ABC Holding
+          © 2026 Northline
         </small>
 
         {/* Decorative pattern */}

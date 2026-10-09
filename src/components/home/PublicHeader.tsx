@@ -19,7 +19,7 @@ export default function PublicHeader() {
         <Link
           href="/"
           className="flex w-fit items-center gap-3"
-          aria-label="ABC Holding homepage"
+          aria-label="Northline homepage"
         >
           <ChartNoAxesColumnIncreasing
             size={38}
@@ -30,7 +30,7 @@ export default function PublicHeader() {
 
           <div className="flex flex-col">
             <span className="font-heading text-lg font-bold leading-none tracking-tight text-white">
-              ABC Holding
+              Northline
             </span>
 
             <span className="mt-1.5 text-[8px] font-semibold uppercase tracking-[2.2px] text-white/50">

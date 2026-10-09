@@ -104,7 +104,7 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
           href="/admin/dashboard"
           className="font-heading text-base font-bold text-ink"
         >
-          ABC Holding
+          Northline
         </Link>
 
         <button
@@ -153,7 +153,7 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
                 onClick={closeDrawer}
                 className="font-heading text-lg font-bold"
               >
-                ABC Holding
+                Northline
               </Link>
 
               <p className="mt-1 text-[10px] uppercase tracking-[2px] text-white/50">

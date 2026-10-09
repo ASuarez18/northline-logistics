@@ -19,7 +19,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
           href="/admin/dashboard"
           className="font-heading text-lg font-bold"
         >
-          ABC Holding
+          Northline
         </Link>
 
         <p className="mt-1 text-[10px] uppercase tracking-[2px] text-white/50">

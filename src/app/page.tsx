@@ -8,7 +8,7 @@ import StatsSection from "@/components/home/StatsSection";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "ABC Holding | Moving Operations Forward",
+  title: "Northline | Moving Operations Forward",
   description:
     "Reliable warehousing, distribution, and supply chain operations built to keep your business moving.",
 };
@@ -33,7 +33,7 @@ export default function HomePage() {
           <ServicesSection />
         </section>
 
-        <section id="about" aria-label="About ABC Holding">
+        <section id="about" aria-label="About Northline">
           <AboutSection />
         </section>
       </main>

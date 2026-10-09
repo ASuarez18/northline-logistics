@@ -42,7 +42,7 @@ export default function AboutSection() {
 
         <div>
           <p className="mb-5 text-[10px] font-bold uppercase tracking-[2.2px] text-orange">
-            The ABC Holding standard
+            The Northline standard
           </p>
 
           <h2 className="max-w-xl font-heading text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-ink sm:text-4xl lg:text-[2.75rem]">
@@ -53,7 +53,7 @@ export default function AboutSection() {
 
           <p className="mt-7 max-w-xl text-sm leading-7 text-muted">
             Great logistics starts with well-run facilities and dedicated
-            teams. At ABC Holding, we focus on the details that make every
+            teams. At Northline, we focus on the details that make every
             operation more dependable, from daily coordination to the movement
             of goods.
           </p>

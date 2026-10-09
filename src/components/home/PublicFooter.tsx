@@ -8,7 +8,7 @@ export default function PublicFooter() {
         <Link
           href="/"
           className="flex w-fit items-center gap-3"
-          aria-label="ABC Holding homepage"
+          aria-label="Northline homepage"
         >
           <ChartNoAxesColumnIncreasing
             size={34}
@@ -19,7 +19,7 @@ export default function PublicFooter() {
 
           <div className="flex flex-col">
             <span className="font-heading text-lg font-bold leading-none tracking-tight">
-              ABC Holding
+              Northline
             </span>
 
             <span className="mt-1.5 text-[8px] font-semibold uppercase tracking-[2.2px] text-white/50">
@@ -33,7 +33,7 @@ export default function PublicFooter() {
         </p>
 
         <p className="text-xs text-white/45 md:text-right">
-          © {new Date().getFullYear()} ABC Holding
+          © {new Date().getFullYear()} Northline
         </p>
       </div>
     </div>

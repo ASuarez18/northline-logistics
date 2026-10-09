@@ -91,7 +91,7 @@ export default function ServicesSection() {
           </div>
 
           <p className="max-w-md text-sm leading-7 text-muted lg:justify-self-end">
-            ABC Holding connects people, facilities, and technology into
+            Northline connects people, facilities, and technology into
             dependable logistics operations that scale with your business.
           </p>
         </div>
