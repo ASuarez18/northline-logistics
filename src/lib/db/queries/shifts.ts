@@ -1,4 +1,5 @@
 import type { Prisma } from "../../generated/prisma/client";
+import { calculateOvertimeSeconds } from "../../time/overtime";
 
 export function findOpenShift(db: Prisma.TransactionClient, userId: string) {
   return db.shift.findFirst({
@@ -21,5 +22,19 @@ export async function readWeeklyShifts(db: Prisma.TransactionClient, userId: str
       AND "clockIn" >= ${start} AND "clockIn" < ${end}
       AND "clockOut" IS NOT NULL
   `;
-  return { shifts, totalSeconds: total.totalSeconds };
+  const overtimeSeconds = shifts.reduce((sum, shift) => {
+    if (!shift.clockOut) return sum;
+    return (sum + calculateOvertimeSeconds(shift.clockIn, shift.clockOut));
+  }, 0);
+
+  return {
+    shifts: shifts.map((shift) => ({
+      ...shift,
+      overtimeSeconds: shift.clockOut
+        ? calculateOvertimeSeconds(shift.clockIn, shift.clockOut)
+        : 0,
+    })),
+    totalSeconds: total.totalSeconds,
+    overtimeSeconds,
+  };
 }

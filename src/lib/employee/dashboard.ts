@@ -3,8 +3,12 @@ import { z } from "zod";
 const timestamp = z.string().datetime({ offset: true });
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const shiftSchema = z.object({
-  id: z.string(), clockIn: timestamp, clockOut: timestamp.nullable(),
-});
+    id: z.string(),
+    clockIn: timestamp,
+    clockOut: timestamp.nullable(),
+    overtimeSeconds: z.number().finite().nonnegative().optional(),
+  });
+
 export const statusSchema = z.object({
   employee: z.object({ firstName: z.string(), lastName: z.string() }),
   timeZone: z.string().refine((value) => {
@@ -19,6 +23,7 @@ export const statusSchema = z.object({
 export const timesheetSchema = z.object({
   weekStart: date,
   totalSeconds: z.number().finite().nonnegative(),
+  overtimeSeconds: z.number().finite().nonnegative(),
   shifts: z.array(shiftSchema),
 });
 export type ClockState = z.infer<typeof statusSchema>;

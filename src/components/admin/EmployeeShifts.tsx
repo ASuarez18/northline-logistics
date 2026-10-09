@@ -2,12 +2,14 @@ import { Clock3 } from "lucide-react";
 
 import { ClockOutDialog } from "@/components/admin/ClockOutDialog";
 import { EditShiftDialog } from "@/components/admin/EditShiftDialog";
+import { formatDuration } from "@/lib/time/company-time";
 
 type ShiftRow = {
   id: string;
   clockIn: string;
   clockOut: string;
   duration: string;
+  overtime: number;
   openShift: { clockInLocal: string } | null;
   closedShift: { clockInLocal: string; clockOutLocal: string } | null;
   employeeName: string;
@@ -106,9 +108,21 @@ export function EmployeeShifts({
                     Duration
                   </span>
 
-                  <span className="font-semibold tabular-nums text-text">
-                    {row.duration}
-                  </span>
+                  <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="whitespace-nowrap font-semibold tabular-nums text-text">
+                      {row.duration}
+                    </span>
+
+                    {row.overtime > 0 && (
+                      <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap">
+                        <span className="text-muted">+</span>
+
+                        <span className="inline-flex items-center whitespace-nowrap rounded-md bg-orange-soft px-2 py-0.5 text-xs font-semibold tabular-nums text-orange-dark">
+                          {formatDuration(row.overtime)} OT
+                        </span>
+                      </span>
+                    )}
+                  </div>
                 </td>
 
                 <td className="block px-4 pb-4 pt-3 sm:table-cell sm:py-3 sm:text-right">

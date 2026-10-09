@@ -8,9 +8,17 @@ import { clockPermissions } from "./clock-rules";
 function fixture() {
   let shift: { id: string; clockIn: Date; clockOut: Date | null } | null = null;
   const tx = {
-    $queryRaw: async () => [{ id: "employee", firstName: "Demo", lastName: "Employee", role: "EMPLOYEE", isActive: true }],
+    $queryRaw: async () => [
+      {
+        id: "employee",
+        firstName: "Demo",
+        lastName: "Employee",
+        role: "EMPLOYEE",
+        isActive: true,
+      },
+    ],
     shift: {
-      findFirst: async () => shift?.clockOut ? null : shift,
+      findFirst: async () => (shift?.clockOut ? null : shift),
       create: async ({ data }: { data: { clockIn: Date } }) => {
         shift = { id: "shift", clockIn: data.clockIn, clockOut: null };
         return shift;
@@ -22,18 +30,33 @@ function fixture() {
       },
     },
   };
-  return { $transaction: async (run: (value: typeof tx) => Promise<unknown>) => run(tx) } as unknown as PrismaClient;
+  return {
+    $transaction: async (run: (value: typeof tx) => Promise<unknown>) =>
+      run(tx),
+  } as unknown as PrismaClient;
 }
 
 test("clock-in response enables clock-out without refreshing, then clock-out succeeds", async () => {
   const db = fixture();
   const start = new Date("2026-10-06T16:00:00Z");
-  const result = await executeEmployeeOperation(db, "employee", "clock-in", null, () => start);
+  const result = await executeEmployeeOperation(
+    db,
+    "employee",
+    "clock-in",
+    null,
+    () => start,
+  );
   assert.ok("canClockOut" in result);
   assert.equal(result.canClockOut, true);
   assert.equal(result.canClockIn, false);
   assert.equal(result.restriction, null);
-  const closed = await executeEmployeeOperation(db, "employee", "clock-out", null, () => new Date(start.getTime() + 1));
+  const closed = await executeEmployeeOperation(
+    db,
+    "employee",
+    "clock-out",
+    null,
+    () => new Date(start.getTime() + 1),
+  );
   assert.ok("openShift" in closed);
   assert.equal(closed.openShift, null);
   assert.equal(closed.canClockIn, true);
@@ -43,13 +66,7 @@ test("clock-in rejects a second clock-in while a shift is already open", async (
   const db = fixture();
   const start = new Date("2026-10-06T16:00:00Z");
 
-  await executeEmployeeOperation(
-    db,
-    "employee",
-    "clock-in",
-    null,
-    () => start,
-  );
+  await executeEmployeeOperation(db, "employee", "clock-in", null, () => start);
 
   await assert.rejects(
     executeEmployeeOperation(
@@ -71,13 +88,7 @@ test("clock-out rejects when there is no open shift", async () => {
   const now = new Date("2026-10-06T16:00:00Z");
 
   await assert.rejects(
-    executeEmployeeOperation(
-      db,
-      "employee",
-      "clock-out",
-      null,
-      () => now,
-    ),
+    executeEmployeeOperation(db, "employee", "clock-out", null, () => now),
     (error: unknown) =>
       error instanceof EmployeeApiError &&
       error.status === 409 &&
@@ -91,15 +102,38 @@ test("actual clock-out still rejects equal or earlier timestamps", async () => {
   await executeEmployeeOperation(db, "employee", "clock-in", null, () => start);
   for (const offset of [0, -1]) {
     await assert.rejects(
-      executeEmployeeOperation(db, "employee", "clock-out", null, () => new Date(start.getTime() + offset)),
-      (error: unknown) => error instanceof EmployeeApiError && error.status === 422,
+      executeEmployeeOperation(
+        db,
+        "employee",
+        "clock-out",
+        null,
+        () => new Date(start.getTime() + offset),
+      ),
+      (error: unknown) =>
+        error instanceof EmployeeApiError && error.status === 422,
     );
   }
 });
 
-test("5 PM deadline and overdue shifts remain restricted", () => {
-  const shift = { clockIn: new Date("2026-10-06T16:00:00Z") };
-  assert.equal(clockPermissions(new Date("2026-10-07T00:00:00Z"), shift).canClockOut, true);
-  assert.equal(clockPermissions(new Date("2026-10-07T00:00:00.001Z"), shift).canClockOut, false);
-  assert.equal(clockPermissions(new Date("2026-10-07T16:00:00Z"), shift).canClockOut, false);
+test("clock-in is allowed after 5 PM Vancouver time", () => {
+  // October 6, 2026: Vancouver is UTC-7.
+  const afterHours = new Date("2026-10-07T00:30:00Z");
+
+  const permissions = clockPermissions(afterHours, null);
+
+  assert.equal(permissions.canClockIn, true);
+  assert.equal(permissions.restriction, null);
+});
+
+test("clock-out remains available after 5 PM", () => {
+  const shift = {
+    clockIn: new Date("2026-10-06T16:00:00Z"),
+  };
+
+  const afterHours = new Date("2026-10-07T01:00:00Z");
+
+  const permissions = clockPermissions(afterHours, shift);
+
+  assert.equal(permissions.canClockOut, true);
+  assert.equal(permissions.restriction, null);
 });
