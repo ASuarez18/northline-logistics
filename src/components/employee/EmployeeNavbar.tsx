@@ -1,4 +1,5 @@
 import LogoutButton from "@/components/auth/LogoutButton";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
 
 type EmployeeNavbarProps = {
   user: {
@@ -12,14 +13,23 @@ export default function EmployeeNavbar({ user }: EmployeeNavbarProps) {
   return (
     <header className="border-b border-border bg-surface">
       <div className="mx-auto flex min-h-16 max-w-296 items-center justify-between gap-3 px-4 sm:px-6">
-        <div className="shrink-0">
-          <p className="font-heading text-base font-bold text-ink">
-            Northline
-          </p>
+        <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
+          <ChartNoAxesColumnIncreasing
+            size={32}
+            strokeWidth={4}
+            className="shrink-0 text-orange sm:size-9"
+            aria-hidden="true"
+          />
 
-          <p className="text-[9px] font-bold uppercase tracking-[1.8px] text-muted">
-            Employee Portal
-          </p>
+          <div className="flex flex-col">
+            <span className="font-heading text-base font-bold leading-none tracking-tight text-ink">
+              Northline
+            </span>
+
+            <span className="mt-1.5 text-[8px] font-semibold uppercase tracking-[1.5px] text-muted">
+              Employee Portal
+            </span>
+          </div>
         </div>
 
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">

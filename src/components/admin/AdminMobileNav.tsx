@@ -7,7 +7,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { ChartNoAxesColumnIncreasing, Menu, X } from "lucide-react";
 
 import AdminNavigation from "@/components/admin/AdminNavigation";
 import LogoutButton from "@/components/auth/LogoutButton";
@@ -102,9 +102,19 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
       <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 lg:hidden">
         <Link
           href="/admin/dashboard"
-          className="font-heading text-base font-bold text-ink"
+          className="flex w-fit items-center gap-2.5"
+          aria-label="Northline Admin Dashboard"
         >
-          Northline
+          <ChartNoAxesColumnIncreasing
+            size={30}
+            strokeWidth={4}
+            className="shrink-0 text-orange"
+            aria-hidden="true"
+          />
+
+          <span className="font-heading text-base font-bold tracking-tight text-ink">
+            Northline
+          </span>
         </Link>
 
         <button
@@ -147,19 +157,29 @@ export default function AdminMobileNav({ user }: AdminMobileNavProps) {
           }`}
         >
           <div className="flex items-start justify-between px-2.5 pb-8">
-            <div>
-              <Link
-                href="/admin/dashboard"
-                onClick={closeDrawer}
-                className="font-heading text-lg font-bold"
-              >
-                Northline
-              </Link>
+            <Link
+              href="/admin/dashboard"
+              onClick={closeDrawer}
+              className="flex min-w-0 items-center gap-3"
+              aria-label="Northline Admin Dashboard"
+            >
+              <ChartNoAxesColumnIncreasing
+                size={34}
+                strokeWidth={4}
+                className="shrink-0 text-orange"
+                aria-hidden="true"
+              />
 
-              <p className="mt-1 text-[10px] uppercase tracking-[2px] text-white/50">
-                Administration Portal
-              </p>
-            </div>
+              <div className="flex min-w-0 flex-col">
+                <span className="font-heading text-lg font-bold leading-none tracking-tight text-white">
+                  Northline
+                </span>
+
+                <span className="mt-1 text-[10px] uppercase tracking-[2px] text-white/50">
+                  Administration Portal
+                </span>
+              </div>
+            </Link>
 
             <button
               ref={closeButtonRef}

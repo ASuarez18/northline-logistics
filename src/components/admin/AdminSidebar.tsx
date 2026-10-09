@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import AdminNavigation from "@/components/admin/AdminNavigation";
 import LogoutButton from "@/components/auth/LogoutButton";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
 
 type AdminSidebarProps = {
   user: {
@@ -17,14 +18,26 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
       <div className="px-2.5 pb-9.5">
         <Link
           href="/admin/dashboard"
-          className="font-heading text-lg font-bold"
+          className="flex w-fit items-center gap-3"
+          aria-label="Northline Admin Dashboard"
         >
-          Northline
-        </Link>
+          <ChartNoAxesColumnIncreasing
+            size={38}
+            strokeWidth={4}
+            className="shrink-0 text-orange"
+            aria-hidden="true"
+          />
 
-        <p className="mt-1 text-[10px] uppercase tracking-[2px] text-white/50">
-          Administration Portal
-        </p>
+          <div className="flex flex-col">
+            <span className="font-heading text-lg font-bold leading-none tracking-tight text-white">
+              Northline
+            </span>
+
+            <span className="mt-1.5 text-[8px]  uppercase tracking-[1.5px] text-white/50">
+              Administration Portal
+            </span>
+          </div>
+        </Link>
       </div>
 
       <div>
@@ -40,9 +53,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
           {user.firstName} {user.lastName}
         </p>
 
-        <p className="mt-1 truncate text-[10px] text-white/50">
-          {user.email}
-        </p>
+        <p className="mt-1 truncate text-[10px] text-white/50">{user.email}</p>
       </div>
 
       <div className="mt-3">
