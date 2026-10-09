@@ -9,6 +9,17 @@ import {
   Building2,
   ChartNoAxesColumnIncreasing,
 } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Employee Login | Northline",
+  description:
+    "Sign in to the Northline Employee Portal to manage your workday, track working hours, and access your employee dashboard.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function LoginPage() {
   const user = await getCurrentUser();
