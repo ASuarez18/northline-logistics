@@ -15,10 +15,17 @@ import {
   formatDuration,
   formatWeekParam,
 } from "@/lib/time/company-time";
+import { calculateOvertimeSeconds } from "@/lib/time/overtime";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ArrowLeft, ChevronLeft, ChevronRight, Clock3, History } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  History,
+} from "lucide-react";
 import { ShiftAuditTrail } from "@/components/admin/ShiftAuditTrail";
 
 export const dynamic = "force-dynamic";
@@ -136,7 +143,19 @@ export default async function EmployeeDetailPage({
             duration:
               shift.durationSeconds === null
                 ? "—"
-                : formatDuration(shift.durationSeconds),
+                : formatDuration(
+                    Math.max(
+                      0,
+                      shift.durationSeconds -
+                        calculateOvertimeSeconds(
+                          shift.clockIn,
+                          shift.clockOut!,
+                        ),
+                    ),
+                  ),
+            overtime: shift.clockOut
+              ? calculateOvertimeSeconds(shift.clockIn, shift.clockOut)
+              : 0,
             openShift: shift.clockOut
               ? null
               : { clockInLocal: formatCompanyDateTimeLocal(shift.clockIn) },

@@ -18,12 +18,31 @@ export default function TimeSheet({
 
   return (
     <div>
-      <div className="my-6 flex flex-col gap-1 border-y border-border py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-        <p className="text-sm text-muted">Completed hours this week</p>
+      {/* Weekly summary */}
+      <div className="my-6 grid grid-cols-1 gap-4 border-y border-border py-4 sm:grid-cols-2 sm:gap-6">
+        <div>
+          <p className="text-sm text-muted">Completed hours this week</p>
 
-        <p className="font-heading text-2xl font-bold text-ink tabular-nums">
-          {duration(timesheet.totalSeconds)}
-        </p>
+          <p className="mt-1 font-heading text-2xl font-bold text-ink tabular-nums">
+            {duration(timesheet.totalSeconds)}
+          </p>
+        </div>
+
+        <div className="sm:border-l sm:border-border sm:pl-6">
+          <p className="text-sm text-muted">Overtime this week</p>
+
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            <p className="font-heading text-2xl font-bold text-orange tabular-nums">
+              {duration(timesheet.overtimeSeconds)}
+            </p>
+
+            {timesheet.overtimeSeconds > 0 && (
+              <span className="rounded-full bg-orange-soft px-2.5 py-1 text-xs font-bold text-orange-dark">
+                Overtime
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       {shifts.length === 0 ? (
@@ -34,69 +53,111 @@ export default function TimeSheet({
         <>
           {/* Mobile */}
           <div className="space-y-3 sm:hidden">
-            {shifts.map((shift) => (
-              <article
-                key={shift.id}
-                className="rounded-xl border border-border bg-cream/50 p-4"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[1.4px] text-muted">
-                      Shift date
-                    </p>
+            {shifts.map((shift) => {
+              const totalSeconds = shift.clockOut
+                ? Math.max(
+                    0,
+                    (Date.parse(shift.clockOut) - Date.parse(shift.clockIn)) /
+                      1000,
+                  )
+                : 0;
 
-                    <p className="mt-1 font-semibold text-ink">
-                      {formatDay(shift.clockIn, timeZone)}
-                    </p>
-                  </div>
+              const overtimeSeconds = shift.overtimeSeconds ?? 0;
 
-                  {shift.clockOut ? (
-                    <p className="font-heading font-bold text-ink tabular-nums">
-                      {duration(
-                        (Date.parse(shift.clockOut) -
-                          Date.parse(shift.clockIn)) /
-                          1000,
-                      )}
-                    </p>
-                  ) : (
-                    <span className="rounded-full bg-success-soft px-2.5 py-1 text-xs font-bold text-success">
-                      In progress
-                    </span>
-                  )}
-                </div>
+              const regularSeconds = Math.max(
+                0,
+                totalSeconds - overtimeSeconds,
+              );
 
-                <dl className="mt-4 grid grid-cols-2 gap-4 border-t border-border pt-4">
-                  <div>
-                    <dt className="text-xs text-muted">Clock in</dt>
-                    <dd className="mt-1 text-sm font-semibold text-ink">
-                      {formatTime(shift.clockIn, timeZone)}
-                    </dd>
-                  </div>
+              return (
+                <article
+                  key={shift.id}
+                  className="rounded-xl border border-border bg-cream/50 p-4"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[1.4px] text-muted">
+                        Shift date
+                      </p>
 
-                  <div>
-                    <dt className="text-xs text-muted">Clock out</dt>
-                    <dd className="mt-1 text-sm font-semibold text-ink">
-                      {shift.clockOut
-                        ? formatTime(shift.clockOut, timeZone)
-                        : "—"}
-                    </dd>
+                      <p className="mt-1 font-semibold text-ink">
+                        {formatDay(shift.clockIn, timeZone)}
+                      </p>
+                    </div>
 
-                    {shift.clockOut &&
-                      formatDay(shift.clockOut, timeZone) !==
-                        formatDay(shift.clockIn, timeZone) && (
-                        <p className="mt-0.5 text-xs text-muted">
-                          {formatDay(shift.clockOut, timeZone)}
+                    {shift.clockOut ? (
+                      <div className="text-right">
+                        <p className="font-heading font-bold text-ink tabular-nums">
+                          {duration(regularSeconds)}
                         </p>
-                      )}
+
+                        {overtimeSeconds > 0 && (
+                          <p className="mt-0.5 text-xs text-muted">
+                            Regular hours
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="rounded-full bg-success-soft px-2.5 py-1 text-xs font-bold text-success">
+                        In progress
+                      </span>
+                    )}
                   </div>
-                </dl>
-              </article>
-            ))}
+
+                  <dl className="mt-4 grid grid-cols-2 gap-4 border-t border-border pt-4">
+                    <div>
+                      <dt className="text-xs text-muted">Clock in</dt>
+
+                      <dd className="mt-1 text-sm font-semibold text-ink">
+                        {formatTime(shift.clockIn, timeZone)}
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt className="text-xs text-muted">Clock out</dt>
+
+                      <dd className="mt-1 text-sm font-semibold text-ink">
+                        {shift.clockOut
+                          ? formatTime(shift.clockOut, timeZone)
+                          : "—"}
+                      </dd>
+
+                      {shift.clockOut &&
+                        formatDay(shift.clockOut, timeZone) !==
+                          formatDay(shift.clockIn, timeZone) && (
+                          <p className="mt-0.5 text-xs text-muted">
+                            {formatDay(shift.clockOut, timeZone)}
+                          </p>
+                        )}
+                    </div>
+                  </dl>
+
+                  {shift.clockOut && overtimeSeconds > 0 && (
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
+                      <span className="rounded-full bg-orange-soft px-2.5 py-1 text-xs font-bold text-orange-dark">
+                        Overtime
+                      </span>
+
+                      <span className="text-sm font-semibold text-orange-dark tabular-nums">
+                        +{duration(overtimeSeconds)}
+                      </span>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
           </div>
 
           {/* Tablet + Desktop */}
           <div className="hidden sm:block">
-            <table className="w-full text-left text-sm">
+            <table className="w-full table-fixed text-left text-sm">
+              <colgroup>
+                <col className="w-1/4" />
+                <col className="w-1/4" />
+                <col className="w-1/4" />
+                <col className="w-1/4" />
+              </colgroup>
+
               <caption className="sr-only">
                 Your shifts for the week starting {timesheet.weekStart}. Dates
                 use {timeZone}.
@@ -119,52 +180,82 @@ export default function TimeSheet({
               </thead>
 
               <tbody>
-                {shifts.map((shift) => (
-                  <tr
-                    key={shift.id}
-                    className="border-b border-border last:border-b-0"
-                  >
-                    <th
-                      scope="row"
-                      className="px-3 py-4 font-semibold text-ink"
+                {shifts.map((shift) => {
+                  const totalSeconds = shift.clockOut
+                    ? Math.max(
+                        0,
+                        (Date.parse(shift.clockOut) -
+                          Date.parse(shift.clockIn)) /
+                          1000,
+                      )
+                    : 0;
+
+                  const overtimeSeconds = shift.overtimeSeconds ?? 0;
+
+                  const regularSeconds = Math.max(
+                    0,
+                    totalSeconds - overtimeSeconds,
+                  );
+
+                  return (
+                    <tr
+                      key={shift.id}
+                      className="border-b border-border last:border-b-0"
                     >
-                      {formatDay(shift.clockIn, timeZone)}
-                    </th>
+                      <th
+                        scope="row"
+                        className="px-3 py-4 font-semibold text-ink"
+                      >
+                        {formatDay(shift.clockIn, timeZone)}
+                      </th>
 
-                    <td className="px-3 py-4 text-text">
-                      {formatTime(shift.clockIn, timeZone)}
-                    </td>
+                      <td className="px-3 py-4 text-text">
+                        {formatTime(shift.clockIn, timeZone)}
+                      </td>
 
-                    <td className="px-3 py-4 text-text">
-                      {shift.clockOut ? (
-                        <span>
-                          {formatTime(shift.clockOut, timeZone)}
+                      <td className="px-3 py-4 text-text">
+                        {shift.clockOut ? (
+                          <span>
+                            {formatTime(shift.clockOut, timeZone)}
 
-                          {formatDay(shift.clockOut, timeZone) !==
-                            formatDay(shift.clockIn, timeZone) && (
-                            <small className="block text-muted">
-                              {formatDay(shift.clockOut, timeZone)}
-                            </small>
-                          )}
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-success-soft px-2.5 py-1 text-xs font-bold text-success">
-                          In progress
-                        </span>
-                      )}
-                    </td>
+                            {formatDay(shift.clockOut, timeZone) !==
+                              formatDay(shift.clockIn, timeZone) && (
+                              <small className="block text-muted">
+                                {formatDay(shift.clockOut, timeZone)}
+                              </small>
+                            )}
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-success-soft px-2.5 py-1 text-xs font-bold text-success">
+                            In progress
+                          </span>
+                        )}
+                      </td>
 
-                    <td className="px-3 py-4 font-semibold text-ink tabular-nums">
-                      {shift.clockOut
-                        ? duration(
-                            (Date.parse(shift.clockOut) -
-                              Date.parse(shift.clockIn)) /
-                              1000,
-                          )
-                        : "—"}
-                    </td>
-                  </tr>
-                ))}
+                      <td className="px-3 py-4 font-semibold text-ink tabular-nums">
+                        {shift.clockOut ? (
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className="whitespace-nowrap">
+                              {duration(regularSeconds)}
+                            </span>
+
+                            {overtimeSeconds > 0 && (
+                              <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap">
+                                <span className="text-muted">+</span>
+
+                                <span className="inline-flex items-center whitespace-nowrap rounded-md bg-orange-soft px-2 py-0.5 text-xs font-semibold text-orange-dark">
+                                  {duration(overtimeSeconds)} OT
+                                </span>
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

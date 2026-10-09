@@ -94,9 +94,9 @@ export function isWithinCompanyBusinessHours(date: Date) {
 }
 
 export function canEmployeeClockIn(date: Date) {
-  const { start, end } = companyBusinessDayBoundaries(date);
+  const { start } = companyBusinessDayBoundaries(date);
 
-  return date >= start && date < end;
+  return date >= start;
 }
 
 export function canEmployeeClockOut(date: Date) {

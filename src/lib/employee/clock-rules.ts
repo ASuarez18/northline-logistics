@@ -5,7 +5,6 @@ import { EmployeeApiError } from "../employee/errors";
 import {
   COMPANY_TIME_ZONE,
   canEmployeeClockIn,
-  companyBusinessDayBoundaries,
 } from "../time/company-time";
 export { COMPANY_TIME_ZONE };
 
@@ -52,27 +51,22 @@ export function clockPermissions(
   openShift: { clockIn: Date } | null,
 ) {
   if (openShift) {
-    const { end: deadline } = companyBusinessDayBoundaries(openShift.clockIn);
-    const overdue = now > deadline;
-    // Availability describes the next action, including immediately after clock-in.
-    // The mutation independently requires a strictly later clock-out timestamp.
-    const canClockOut = !overdue && now >= openShift.clockIn;
-    return {
-      canClockIn: false,
-      canClockOut,
-      restriction: overdue
-        ? "Please ask your admin to close this shift. The 5:00 PM deadline has passed."
-        : !canClockOut
-          ? "Clock-out must be after clock-in."
-          : null,
-    };
-  }
+  const canClockOut = now >= openShift.clockIn;
+
+  return {
+    canClockIn: false,
+    canClockOut,
+    restriction: canClockOut
+      ? null
+      : "Clock-out must be after clock-in.",
+  };
+}
   const canClockIn = canEmployeeClockIn(now);
   return {
     canClockIn,
     canClockOut: false,
     restriction: canClockIn
       ? null
-      : "You can clock in from 8:00 AM until 5:00 PM.",
+      : "You can clock in starting at 8:00 AM.",
   };
 }
