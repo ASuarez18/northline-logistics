@@ -3,6 +3,16 @@
 ## Deployment link
 [Northline Logistics](https://northline-logistics-seven.vercel.app/)
 
+## Demo Credentials
+
+### Admin
+- Email: admin@northline.com
+- Password: Admin123!
+
+### Employee
+- Email: employee01@northline.com
+- Password: Employee123!
+
 ABC Holding Ltd. has about 40 employees across two offices. Today, staff write their hours on paper sheets, a manager retypes them into a spreadsheet every Friday, and payroll is wrong often enough that nobody trusts it. The company wants one system where employees clock in and out, and managers can see who is working right now and how many hours each person logged each week.
 
 You are tasked with building that system as a Next.js application backed by PostgreSQL.
