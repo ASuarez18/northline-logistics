@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
 
 import { ClockedInTable } from "@/components/admin/ClockedInTable";
 import { WeeklyOverview } from "@/components/admin/WeeklyOverview";
@@ -19,6 +21,17 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  description:
+    "Monitor employee attendance, track active shifts, review weekly working hours, and manage workforce operations.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminDashboardPage({
   searchParams,
